@@ -1,4 +1,4 @@
-version: '1'
+version: '3.8'
 
 services:
   web:
@@ -9,5 +9,27 @@ services:
       - .:/code
     environment:
       FLASK_ENV: development
+    depends_on:
+      - redis
+
   redis:
     image: "redis:alpine"
+
+  wordpress-db:
+    image: 'mariadb:11.1.2-jammy'
+    restart: always
+    environment:
+      MYSQL_DATABASE: wp_database_2
+      MYSQL_USER: wp-user-2
+      MYSQL_PASSWORD: my_cool_secret_2
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - maradb_data:/var/lib/mysql
+    networks:
+      - wp_net_2
+
+volumes:
+  maradb_data:
+
+networks:
+  wp_net_2:
