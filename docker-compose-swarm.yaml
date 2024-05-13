@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  web:
+    image: practica3-web 
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/code
+    environment:
+      FLASK_ENV: development
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+    depends_on:
+      - redis
+
+  redis:
+    image: "redis:alpine"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+
+  wordpress-db:
+    image: 'mariadb:11.1.2-jammy'
+    restart: always
+    environment:
+      MYSQL_DATABASE: wp_database_2
+      MYSQL_USER: wp-user-2
+      MYSQL_PASSWORD: my_cool_secret_2
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - maradb_data:/var/lib/mysql
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+    networks:
+      - wp_net_2
+
+volumes:
+  maradb_data:
+
+networks:
+  wp_net_2:
